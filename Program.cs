@@ -11,6 +11,8 @@ namespace ENGR115_March2023_CourseProject
     {
         static void Main(string[] args)
         {
+            //Introducing the program to the user
+            Console.WriteLine("This is the Breguet Formula Calculator for finding Range and Endurance for aircraft.");
             //using ints for whole number constants
             int configsQty = GetConfigurationQty(); 
             // 2 things - 1) This doesn't need to take an input number, as it only takes a number from the user. {Kyle}
@@ -20,9 +22,6 @@ namespace ENGR115_March2023_CourseProject
             //utilizing strings to display text and place user inputs into formulas
             //string userinputs; Not used in this method {Kyle}
             //string pressEnter = "Press Enter to continue."; No need for this delay {Kyle}
-
-            //Introducing the program to the user
-            Console.WriteLine("This is the Breguet Formula Calculator for finding Range and Endurance for aircraft.");
 
             //Console.WriteLine(pressEnter); No need for this delay {Kyle}
             //Console.ReadLine();
@@ -36,29 +35,30 @@ namespace ENGR115_March2023_CourseProject
             float[] endurOutputR = new float[configsQty];
             float[] configsAmt = new float[configsQty];
 
+            //constants for calculations for all numbers of configurations 
+            //Moved out of loop for efficiency and less memory usage {Kyle}
+            int mGWeight = 2440;
+            int eWeight = 1600;
+            int FuelCap = 50;
+            int fuelWeightpg = 6;
+            int passWeight = 170;
+            int luggage = 25;
+            int wingArea = 174;
+            int mUsefulLoad = mGWeight - eWeight;
+            //using floats for non-whole number constants
+            float rangeOutput, endurOutput;
+            float propEff = .8f;
+            float specFuelCon = (float)(7.5 * Math.Pow(10, -7f));
+            float maxCLOverCD = 14.5f;
+            float maxCLOverCD3halves = 10f;
+            float airDense = (float)(20.38 * Math.Pow(10, -4f));
+
             //using a for loop to increment the array based on # of configurations
             for (int i = 0; i < configsQty; i++)
             {
-                int passQty;
+                //int passQty; Not used {Kyle}
                 // getting passenger amounts from GetPassengerQty method
                 passAmount[i] = GetPassengerQty(i); //Changed to only one input for passQty method since you call it for each config {Kyle}
-
-                //constants for calculations for all numbers of configurations
-                int mGWeight = 2440;
-                int eWeight = 1600;
-                int FuelCap = 50;
-                int fuelWeightpg = 6;
-                int passWeight = 170;
-                int luggage = 25;
-                int wingArea = 174;
-                int mUsefulLoad = mGWeight - eWeight;
-                //using floats for non-whole number constants
-                float rangeOutput, endurOutput;
-                float propEff = .8f;
-                float specFuelCon = (float)(7.5 * Math.Pow(10, -7f));
-                float maxCLOverCD = 14.5f;
-                float maxCLOverCD3halves = 10f;
-                float airDense = (float)(20.38 * Math.Pow(10, -4f));
 
                 //specific variables for configuration 1
                 float passluggweight = (passWeight + luggage) * passAmount[i];
@@ -88,13 +88,13 @@ namespace ENGR115_March2023_CourseProject
                 float endurance = (propEff / specFuelCon) * maxCLOverCD3halves * MathF.Sqrt(2.0f * airDense * wingArea) *
                     (MathF.Pow(nofuel, -0.5f) - MathF.Pow(mGWeight, -0.5f)) / 3600.0f;
                 endurOutputR[i] = (float)Math.Round(endurance, 1);
-
-                Console.WriteLine(string.Format("{0,-10}  {1,-10}   {2,-10}   {3,-10}   {4,-10}   {5,-10}", "Aircraft", "Passengers", "T/O Weight", "Fuel", "Range", "Endurance "));
-                Console.WriteLine(string.Format("{0,-10}  {1,-10}   {2,-10}   {3,-10}   {4,-10}   {5,-10}", "", "", "(lbs)", "(gals)", "(miles)", "(hrs)"));
-                for (int x = 0; x <= i; x++)
-                {
-                    Console.WriteLine("{0,-10}  {1,-10}   {2,-10}   {3,-10}   {4,-10}   {5,-10}", configsAmt[x], passAmount[x], gToWeightR[x], fuelAvailR[x], rangeOutputR[x], endurOutputR[x]);
-                }
+            }
+            //Moved the info printing out of the loop so the info only prints once {Kyle}
+            Console.WriteLine(string.Format("{0,-10}  {1,-10}   {2,-10}   {3,-10}   {4,-10}   {5,-10}", "Aircraft", "Passengers", "T/O Weight", "Fuel", "Range", "Endurance "));
+            Console.WriteLine(string.Format("{0,-10}  {1,-10}   {2,-10}   {3,-10}   {4,-10}   {5,-10}", "", "", "(lbs)", "(gals)", "(miles)", "(hrs)"));
+            for (int x = 0; x < configsQty; x++)
+            {
+                Console.WriteLine("{0,-10}  {1,-10}   {2,-10}   {3,-10}   {4,-10}   {5,-10}", x, passAmount[x], gToWeightR[x], fuelAvailR[x], rangeOutputR[x], endurOutputR[x]);
             }
         }
         // setting up a method for the configurations quantity

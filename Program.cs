@@ -3,8 +3,6 @@
 //This program is used to calculate range and endurance of aircraft configurations with varying numbers of passengers
 //Included in this build are ints, floats, parse, bools, strings, and math functions
 
-using System.ComponentModel.DataAnnotations;
-
 namespace ENGR115_March2023_CourseProject
 {
     internal class Program
@@ -25,17 +23,20 @@ namespace ENGR115_March2023_CourseProject
         private static float maxCLOverCD = 14.5f;
         private static float maxCLOverCD3halves = 10f;
         private static float airDense = (float)(20.38 * Math.Pow(10, -4f));
-        private static float[]? passAmount;
-        private static float[]? gToWeightR;
-        private static float[]? fuelAvailR;
-        private static float[]? rangeOutputR;
-        private static float[]? endurOutputR;
-        private static float[]? configsAmt;
+
+        //[Adam] 2023/04/19 - everything below this line was being set up in what I think are intended to be arrays. Lists will work better in C#. Native and behave just like vectors in C++ or typed Lists in Python basically
+        // initializing here to new empty lists for each vairable so that they are able to be used later in the program. Many errors being generated from this "Null Object Reference"
+        private static List<float> passAmount = new List<float>();
+        private static List<float> gToWeightR = new List<float>();
+        private static List<float> fuelAvailR = new List<float>();
+        private static List<float> rangeOutputR = new List<float>();
+        private static List<float> endurOutputR = new List<float>();
+        private static List<float> configsAmt = new List<float>();
 
         //constants for calculations for all numbers of configurations 
         //Moved out of loop for efficiency and less memory usage {Kyle}
         
-        void Main(string[] args)
+        static void Main(string[] args)
         {
             //Introducing the program to the user
             Console.WriteLine("This is the Breguet Formula Calculator for finding Range and Endurance for aircraft.");
@@ -61,8 +62,10 @@ namespace ENGR115_March2023_CourseProject
             Console.WriteLine(string.Format("{0,-10}  {1,-10}   {2,-10}   {3,-10}   {4,-10}   {5,-10}", "", "", "(lbs)", "(gals)", "(miles)", "(hrs)"));
             for (int x = 0; x < configsQty; x++)
             {
-                Console.WriteLine("{0,-10}  {1,-10}   {2,-10}   {3,-10}   {4,-10}   {5,-10}", x+1, passAmount[x], gToWeightR[x], fuelAvailR[x], rangeOutputR[x], endurOutputR[x]);
+                Console.WriteLine("{0,-10}  {1,-10}   {2,-10}   {3,-10}   {4,-10}   {5,-10}", x+1, passAmount[x], gToWeightR[x], fuelAvailR[x], rangeOutputR[x], endurOutputR[x]); //[Adam] 2023/04/19 - Lists can be indexed using brackets once initialized so this will work just fine
             }
+
+            Console.ReadLine(); //[Adam] 2023/04/19 - Get debugger to hold at end of program to see results before closing terminal
         }
         // setting up a method for the configurations quantity
         static int GetConfigurationQty()
@@ -80,7 +83,7 @@ namespace ENGR115_March2023_CourseProject
                     rightNumconfigs = true;
                     Console.WriteLine("Thank you for your input");
                     //Console.ReadLine(); No need for this delay {Kyle}
-                    break;  //loop being broken once the range conditions are met
+                    //break;  //loop being broken once the range conditions are met //[Adam] 2023/04/19 - break not necessary if rightNumconfigs is being set to true due to while condition. 
                 }
                 else{
                     Console.WriteLine("Please ensure your value is between 1 and 5, thank you!");
@@ -104,9 +107,10 @@ namespace ENGR115_March2023_CourseProject
                 }
                 else if(0 <= passQty && passQty <= 4){
                     passValid = true;
-                    break;
+                    //break; //[Adam] 2023/04/19 Break not necessary for same reason as above. Will already exit loop at correct time.
                 }
-                else{
+                else
+                {
                     Console.WriteLine("Please ensure your value is between 0 and 4, thank you!");
                 }
             }
@@ -120,7 +124,7 @@ namespace ENGR115_March2023_CourseProject
             {
                 //int passQty; Not used {Kyle}
                 // getting passenger amounts from GetPassengerQty method
-                passAmount[i] = GetPassengerQty(i); //Changed to only one input for passQty method since you call it for each config {Kyle}
+                passAmount.Add(GetPassengerQty(i)); //Changed to only one input for passQty method since you call it for each config {Kyle} //[Adam] 2023/04/19 - Pass amount now initialized in globals. Also changed to utilize List<T>.Add()
 
                 //specific variables for configuration 1
                 float passluggweight = (passWeight + luggage) * passAmount[i];
@@ -131,25 +135,25 @@ namespace ENGR115_March2023_CourseProject
                 }//; This semi-colon shouldn't be here {Kyle}
                 float totalFuelW = fuelAvail * fuelWeightpg;
                 float gToWeight = eWeight + passluggweight + totalFuelW;
-                gToWeightR[i] = gToWeight;
+                gToWeightR.Add(gToWeight); //[Adam] 2023/04/19 - Changed from gToWeightR[i] to use List<T>.Add()
                 float nofuel = gToWeight - totalFuelW;
                 if (gToWeight > 2440)
                 {
                     gToWeight = 2440;
                     fuelAvail = (gToWeight - nofuel) / fuelWeightpg;
                 }
-                fuelAvailR[i] = fuelAvail;
+                fuelAvailR.Add(fuelAvail); //[Adam] 2023/04/19 - Changed from fuelAvailR[i] to use List<T>.Add()
 
                 //perform calculations for configuration 1 using floats
                 //caluclations for range
                 float rangeft = propEff / specFuelCon * maxCLOverCD * MathF.Log(mGWeight / nofuel);
                 float range = rangeft / 5280.0f;
-                rangeOutputR[i] = (float)Math.Round(range, 0);
+                rangeOutputR.Add((float)Math.Round(range, 0)); //[Adam] 2023/04/19 - Changed from rangeOutputR[i] to use List<T>.Add()
 
                 //calculations for endurance
                 float endurance = (propEff / specFuelCon) * maxCLOverCD3halves * MathF.Sqrt(2.0f * airDense * wingArea) *
                     (MathF.Pow(nofuel, -0.5f) - MathF.Pow(mGWeight, -0.5f)) / 3600.0f;
-                endurOutputR[i] = (float)Math.Round(endurance, 1);
+                endurOutputR.Add((float)Math.Round(endurance, 1)); //[Adam] 2023/04/19 - Changed from endurOutputR[i] to use List<T>.Add()
             }
         }
     }

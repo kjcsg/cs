@@ -90,6 +90,7 @@ namespace ENGR115_March2023_CourseProject
         {
             passAmount = GetPassengerQty(configNum);
             passluggweight = (passWeight + luggage) * passAmount;
+            fuelAvail = (mUsefulLoad - passluggweight) / fuelWeightpg > 50 ? FuelCap : (mUsefulLoad - passluggweight) / fuelWeightpg;
             totalFuelW = fuelAvail * fuelWeightpg;
             gToWeight = eWeight + passluggweight + totalFuelW;
             nofuel = gToWeight - totalFuelW;

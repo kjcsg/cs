@@ -15,24 +15,23 @@ namespace ENGR115_March2023_CourseProject
 
             Console.WriteLine("Let's move on to the next step, shall we?");
 
-            List<AircraftConfiguration> outputConfigs = new List<AircraftConfiguration>();
+            AircraftConfiguration[] outputConfigs = new AircraftConfiguration[configsQty];
 
             for (int i = 0; i < configsQty; i++)
             {
                 AircraftConfiguration config = new AircraftConfiguration(i);
-                outputConfigs.Add(config);
+                outputConfigs[i] = config;
             }
 
-            //Moved the info printing out of the loop so the info only prints once {Kyle}
             Console.WriteLine(string.Format("{0,-10}  {1,-10}   {2,-10}   {3,-10}   {4,-10}   {5,-10}", "Aircraft", "Passengers", "T/O Weight", "Fuel", "Range", "Endurance "));
             Console.WriteLine(string.Format("{0,-10}  {1,-10}   {2,-10}   {3,-10}   {4,-10}   {5,-10}", "", "", "(lbs)", "(gals)", "(miles)", "(hrs)"));
             int x = 1;
             foreach(AircraftConfiguration config in outputConfigs)
             {
-                Console.WriteLine("{0,-10}  {1,-10}   {2,-10}   {3,-10}   {4,-10}   {5,-10}", x, config.passAmount, config.gToWeight, config.fuelAvail, config.range, config.endurance.ToString("F1")); //[Adam] 2023/04/19 - Lists can be indexed using brackets once initialized so this will work just fine
+                Console.WriteLine("{0,-10}  {1,-10}   {2,-10}   {3,-10}   {4,-10}   {5,-10}", x, config.passAmount, config.gToWeight, config.fuelAvail, config.range, config.endurance.ToString("F1"));
                 x++;
             }
-
+            
             Console.ReadLine(); //[Adam] 2023/04/19 - Get debugger to hold at end of program to see results before closing terminal
         }
         // setting up a method for the configurations quantity
@@ -91,7 +90,6 @@ namespace ENGR115_March2023_CourseProject
         {
             passAmount = GetPassengerQty(configNum);
             passluggweight = (passWeight + luggage) * passAmount;
-            fuelAvail = (mUsefulLoad - passluggweight) / fuelWeightpg > 50 ? FuelCap : (mUsefulLoad - passluggweight) / fuelWeightpg;
             totalFuelW = fuelAvail * fuelWeightpg;
             gToWeight = eWeight + passluggweight + totalFuelW;
             nofuel = gToWeight - totalFuelW;

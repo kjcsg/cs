@@ -1,160 +1,200 @@
 ﻿//Michael Sandelli
 //Intro to Computing for Engineers
 //This program is used to calculate range and endurance of aircraft configurations with varying numbers of passengers
-//Included in this build are ints, floats, parse, bools, strings, and math functions
-
+//Included in this build are ints, doubles, parse, bools, strings, and math functions
+using System.IO;
+using System;
+using CsvHelper;
+using System.Globalization;
 namespace ENGR115_March2023_CourseProject
 {
-    internal class Program
+    public class Program
     {
-        private static int configsQty = 0;
-        private static int mGWeight = 2440;
-        private static int eWeight = 1600;
-        private static int FuelCap = 50;
-        private static int fuelWeightpg = 6;
-        private static int passWeight = 170;
-        private static int luggage = 25;
-        private static int wingArea = 174;
-        private static int mUsefulLoad = 840; //Set to the constant number, was mGWeight-eWeight {Kyle}
-        //using floats for non-whole number constants
-        //float rangeOutput, endurOutput; Never used {Kyle}
-        private static float propEff = .8f;
-        private static float specFuelCon = (float)(7.5 * Math.Pow(10, -7f));
-        private static float maxCLOverCD = 14.5f;
-        private static float maxCLOverCD3halves = 10f;
-        private static float airDense = (float)(20.38 * Math.Pow(10, -4f));
 
-        //[Adam] 2023/04/19 - everything below this line was being set up in what I think are intended to be arrays. Lists will work better in C#. Native and behave just like vectors in C++ or typed Lists in Python basically
-        // initializing here to new empty lists for each vairable so that they are able to be used later in the program. Many errors being generated from this "Null Object Reference"
-        private static List<float> passAmount = new List<float>();
-        private static List<float> gToWeightR = new List<float>();
-        private static List<float> fuelAvailR = new List<float>();
-        private static List<float> rangeOutputR = new List<float>();
-        private static List<float> endurOutputR = new List<float>();
-        private static List<float> configsAmt = new List<float>();
-
-        //constants for calculations for all numbers of configurations 
-        //Moved out of loop for efficiency and less memory usage {Kyle}
-        
         static void Main(string[] args)
+
         {
             //Introducing the program to the user
             Console.WriteLine("This is the Breguet Formula Calculator for finding Range and Endurance for aircraft.");
-            //using ints for whole number constants
-            configsQty = GetConfigurationQty(); 
-            // 2 things - 1) This doesn't need to take an input number, as it only takes a number from the user. {Kyle}
-            // 2) I condensed your code to get number of configs via calling the method to one line {Kyle}
-            //int numConfigs = 0; Not used {Kyle}
+            Console.WriteLine();
 
-            //utilizing strings to display text and place user inputs into formulas
-            //string userinputs; Not used in this method {Kyle}
-            //string pressEnter = "Press Enter to continue."; No need for this delay {Kyle}
-
-            //Console.WriteLine(pressEnter); No need for this delay {Kyle}
-            //Console.ReadLine();
+            int configsQty = GetConfigurationQty(); //method set up to get the # of aircraft configurations
 
             Console.WriteLine("Let's move on to the next step, shall we?");
+            Console.WriteLine();
 
-            DoMath(); //Calls the method for all the calculations to be done and fills the arrays with the proper info {Kyle}
+            Aircraft[] outputConfigs = new Aircraft[configsQty]; //set up an array that calls the Aircraft class and has a length of the inputted amount of configs
 
-            //Moved the info printing out of the loop so the info only prints once {Kyle}
-            Console.WriteLine(string.Format("{0,-10}  {1,-10}   {2,-10}   {3,-10}   {4,-10}   {5,-10}", "Aircraft", "Passengers", "T/O Weight", "Fuel", "Range", "Endurance "));
-            Console.WriteLine(string.Format("{0,-10}  {1,-10}   {2,-10}   {3,-10}   {4,-10}   {5,-10}", "", "", "(lbs)", "(gals)", "(miles)", "(hrs)"));
-            for (int x = 0; x < configsQty; x++)
+            for (int i = 0; i < configsQty; i++) //for loop set up to run the Aircraft class the amount of times that equals the # of configs
             {
-                Console.WriteLine("{0,-10}  {1,-10}   {2,-10}   {3,-10}   {4,-10}   {5,-10}", x+1, passAmount[x], gToWeightR[x], fuelAvailR[x], rangeOutputR[x], endurOutputR[x]); //[Adam] 2023/04/19 - Lists can be indexed using brackets once initialized so this will work just fine
+                Aircraft config = new Aircraft(i);
+                outputConfigs[i] = config;
             }
 
-            Console.ReadLine(); //[Adam] 2023/04/19 - Get debugger to hold at end of program to see results before closing terminal
+            //even spacing added to the display table header
+            Console.WriteLine(string.Format("{0,-10}  {1,-10}   {2,-10}   {3,-10}   {4,-10}   {5,-10}", "Aircraft", "Passengers", "T/O Weight", "Fuel", "Range", "Endurance "));
+            Console.WriteLine(string.Format("{0,-10}  {1,-10}   {2,-10}   {3,-10}   {4,-10}   {5,-10}", "", "", "(lbs)", "(gals)", "(miles)", "(hrs)"));
+
+            int x = 1;
+            foreach (Aircraft config in outputConfigs)
+            //for each loop set up to display each configuration's #, passenger amount, and calculated results
+            //loop stops when the amount of configurations inputted are reached
+            {
+                //display values are now pulled from the AircraftConfiguration class using config.<variable>
+                Console.WriteLine("{0,-10}  {1,-10}   {2,-10}   {3,-10}   {4,-10}   {5,-10}", x, config.passAmount, config.gToWeight, config.fuelAvail, config.range, config.endurance);
+                x++; //using x and x++ to increment the aircraft #
+            }
+
+            var docPath = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
+            using (var streamwriter = new StreamWriter(docPath))
+            {
+                using (var csvwriter = new CsvWriter(streamwriter, CultureInfo.InvariantCulture)) 
+                {
+                    var aircraft = Aircraft.GetConfigurationQty();
+                    csvwriter.WriteRecords(outputConfigs);
+                }
+            }
+            string[] headings = { "Aircraft", "Passengers", "T/O Weight", "Fuel", "Range", "Endurance " };
+            string separator = ",";
+            string[] outputCsv;
+
+
+            Console.ReadLine(); //Adding a pause between results and asking for more calculations
+
+            //setting up a bool to restart the program if the user would like to compare more configurations
+            string userinputs;
+            bool moreCalc;
+            moreCalc = false;
+            Console.WriteLine();
+            Console.WriteLine("Would you like to perform more calculations?");
+            userinputs = Console.ReadLine();
+            if (userinputs == "y" || userinputs == "Y" || userinputs == "yes" || userinputs == "YES" || userinputs == "Yes") //various forms of 'yes'
+            {
+                moreCalc = true;
+                Console.Clear();
+                Main(args);
+            }
+            else //exiting the program when any input other than what's in the above if statement is given
+            {
+                Console.WriteLine("Thank you for using this calculator!");
+                System.Environment.Exit(0);
+            }
         }
-        // setting up a method for the configurations quantity
-        static int GetConfigurationQty()
+       
+
+        public static int GetConfigurationQty()  // setting up a method for the configurations quantity
         {
             int numConfigs = 0;
-            //setting up a while loop for input validation
             bool rightNumconfigs = false;
             while (!rightNumconfigs)
             {
                 Console.WriteLine("Please input the number of aircraft configurations you would like to compare.");
-                if(!int.TryParse(Console.ReadLine(), out numConfigs)){
+                if (!int.TryParse(Console.ReadLine(), out numConfigs))
+                {
                     Console.WriteLine("You entered a non-numeric value, please enter a numeric value for your configurations, thank you!");
                 }
-                else if(0 < numConfigs && numConfigs <= 5){
+                else if (0 < numConfigs && numConfigs <= 5)
+                {
                     rightNumconfigs = true;
                     Console.WriteLine("Thank you for your input");
-                    //Console.ReadLine(); No need for this delay {Kyle}
-                    //break;  //loop being broken once the range conditions are met //[Adam] 2023/04/19 - break not necessary if rightNumconfigs is being set to true due to while condition. 
                 }
-                else{
+                else
+                {
                     Console.WriteLine("Please ensure your value is between 1 and 5, thank you!");
                 }
             }
-            //using another while loop with if-else conditions to validate that while the input is numeric, it must be within a given range
-            //range sought is 1-5 due to 0-4 passengers
-            //@@@ I put all of this into the first while loop to make it run better and catch all errors in one loop {Kyle}
+
             return numConfigs;
         }
-        // setting up a method for getting the passenger quantity for each configuration
-        static float GetPassengerQty(int configNum) //Only need one input since you're calling this for each config {Kyle}
+    }
+
+    public class Aircraft : Program  //setting up a public class for calculations and for being called in the Program class
+    {
+        //using ints for whole numbers and floats for values that contain decimals
+        //made constants and variables that are used only within the class private
+        //made formula outputs public so they can be called in the Program class for the output display table
+        private int mGWeight = 2440;
+        private int eWeight = 1600;
+        private int FuelCap = 50;
+        private int fuelWeightpg = 6;
+        private int passWeight = 170;
+        private int luggage = 25;
+        private int wingArea = 174;
+        private int mUsefulLoad = 840;
+        private float propEff = .8f;
+        private float specFuelCon = (float)(7.5 * Math.Pow(10, -7f));
+        private float maxCLOverCD = 14.5f;
+        private float maxCLOverCD3halves = 10f;
+        private float airDense = (float)(20.38 * Math.Pow(10, -4f));
+        public float passAmount;
+        private float passluggweight;
+        public float fuelAvail;
+        private float totalFuelW;
+        public float gToWeight;
+        private float nofuel;
+        private float rangeft;
+        public float range;
+        private float enduranceHrs;
+        public float endurance;
+
+
+
+
+
+
+
+        public Aircraft(int configNum) //created a constructor within the class that handles all of the calculations
+        {
+            passAmount = GetPassengerQty(configNum);
+            passluggweight = (passWeight + luggage) * passAmount;
+            fuelAvail = (mUsefulLoad - passluggweight) / fuelWeightpg;
+            fuelAvail = (mUsefulLoad - passluggweight) / fuelWeightpg;
+            if (fuelAvail > 50)
+            {
+                fuelAvail = FuelCap;
+            }
+            totalFuelW = fuelAvail * fuelWeightpg;
+            gToWeight = eWeight + passluggweight + totalFuelW;
+            nofuel = gToWeight - totalFuelW;
+            if (gToWeight > 2440)
+            {
+                gToWeight = mGWeight;
+            }
+            fuelAvail = (gToWeight - nofuel) / fuelWeightpg;
+            rangeft = (float)(propEff / specFuelCon * maxCLOverCD * Math.Log(mGWeight / nofuel));
+            range = (float)Math.Round(rangeft / 5280.0, 0);
+            enduranceHrs = (float)((propEff / specFuelCon) * maxCLOverCD3halves * Math.Sqrt(2.0 * airDense * wingArea) * (Math.Pow(nofuel, -0.5f) - Math.Pow(mGWeight, -0.5)) / 3600.0f);
+            endurance = (float)Math.Round(enduranceHrs, 1);
+        }
+
+
+        public float GetPassengerQty(int configNum) // setting up a method for getting the passenger quantity for each configuration
+
+        //moved this method to Aircraft class as all of the calculations depend on # of passengers inputted
         {
             float passQty = 0;
             bool passValid = false;
             while (!passValid)
             {
                 Console.WriteLine("How many passengers are on configuration {0} ?", configNum + 1);
-                if(!float.TryParse(Console.ReadLine(), out passQty)){
+                if (!float.TryParse(Console.ReadLine(), out passQty))
+                {
                     Console.WriteLine("You entered a non-numeric value, please enter a numeric value, thank you!");
                 }
-                else if(0 <= passQty && passQty <= 4){
+                else if (0 <= passQty && passQty <= 4)
+                {
                     passValid = true;
-                    //break; //[Adam] 2023/04/19 Break not necessary for same reason as above. Will already exit loop at correct time.
                 }
                 else
                 {
                     Console.WriteLine("Please ensure your value is between 0 and 4, thank you!");
                 }
             }
-            //@@@@@ Condensed your while loop to one loop above {Kyle}
-            //using while loop with if-else conditions to validate that while the input is numeric, it must be within a given range
-            return passQty;      
+
+            return passQty;
         }
-        static void DoMath(){
-            //using a for loop to increment the array based on # of configurations
-            for (int i = 0; i < configsQty; i++)
-            {
-                //int passQty; Not used {Kyle}
-                // getting passenger amounts from GetPassengerQty method
-                passAmount.Add(GetPassengerQty(i)); //Changed to only one input for passQty method since you call it for each config {Kyle} //[Adam] 2023/04/19 - Pass amount now initialized in globals. Also changed to utilize List<T>.Add()
 
-                //specific variables for configuration 1
-                float passluggweight = (passWeight + luggage) * passAmount[i];
-                float fuelAvail = (mUsefulLoad - passluggweight) / fuelWeightpg;
-                if (fuelAvail > 50)
-                {
-                    fuelAvail = FuelCap;
-                }//; This semi-colon shouldn't be here {Kyle}
-                float totalFuelW = fuelAvail * fuelWeightpg;
-                float gToWeight = eWeight + passluggweight + totalFuelW;
-                gToWeightR.Add(gToWeight); //[Adam] 2023/04/19 - Changed from gToWeightR[i] to use List<T>.Add()
-                float nofuel = gToWeight - totalFuelW;
-                if (gToWeight > 2440)
-                {
-                    gToWeight = 2440;
-                    fuelAvail = (gToWeight - nofuel) / fuelWeightpg;
-                }
-                fuelAvailR.Add(fuelAvail); //[Adam] 2023/04/19 - Changed from fuelAvailR[i] to use List<T>.Add()
-
-                //perform calculations for configuration 1 using floats
-                //caluclations for range
-                float rangeft = propEff / specFuelCon * maxCLOverCD * MathF.Log(mGWeight / nofuel);
-                float range = rangeft / 5280.0f;
-                rangeOutputR.Add((float)Math.Round(range, 0)); //[Adam] 2023/04/19 - Changed from rangeOutputR[i] to use List<T>.Add()
-
-                //calculations for endurance
-                float endurance = (propEff / specFuelCon) * maxCLOverCD3halves * MathF.Sqrt(2.0f * airDense * wingArea) *
-                    (MathF.Pow(nofuel, -0.5f) - MathF.Pow(mGWeight, -0.5f)) / 3600.0f;
-                endurOutputR.Add((float)Math.Round(endurance, 1)); //[Adam] 2023/04/19 - Changed from endurOutputR[i] to use List<T>.Add()
-            }
-        }
     }
+
+
 }

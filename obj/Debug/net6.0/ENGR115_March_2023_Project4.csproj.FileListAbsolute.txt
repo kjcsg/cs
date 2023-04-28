@@ -15,3 +15,20 @@ C:\Users\insec\OneDrive\Desktop\ENGR 115\Michael Sandelli\Michael Sandelli\ENGR1
 C:\Users\insec\OneDrive\Desktop\ENGR 115\Michael Sandelli\Michael Sandelli\ENGR115_March_2023_Project4\obj\Debug\net6.0\ref\ENGR115_March_2023_Project4.dll
 C:\Users\insec\OneDrive\Desktop\ENGR 115\Michael Sandelli\Michael Sandelli\ENGR115_March_2023_Project4\bin\Debug\net6.0\CsvHelper.dll
 C:\Users\insec\OneDrive\Desktop\ENGR 115\Michael Sandelli\Michael Sandelli\ENGR115_March_2023_Project4\obj\Debug\net6.0\ENGR115_March_2023_Project4.csproj.CopyComplete
+D:\GitHub\cs\bin\Debug\net6.0\ENGR115_March_2023_Project4.exe
+D:\GitHub\cs\bin\Debug\net6.0\ENGR115_March_2023_Project4.deps.json
+D:\GitHub\cs\bin\Debug\net6.0\ENGR115_March_2023_Project4.runtimeconfig.json
+D:\GitHub\cs\bin\Debug\net6.0\ENGR115_March_2023_Project4.dll
+D:\GitHub\cs\bin\Debug\net6.0\ENGR115_March_2023_Project4.pdb
+D:\GitHub\cs\bin\Debug\net6.0\CsvHelper.dll
+D:\GitHub\cs\obj\Debug\net6.0\ENGR115_March_2023_Project4.csproj.AssemblyReference.cache
+D:\GitHub\cs\obj\Debug\net6.0\ENGR115_March_2023_Project4.GeneratedMSBuildEditorConfig.editorconfig
+D:\GitHub\cs\obj\Debug\net6.0\ENGR115_March_2023_Project4.AssemblyInfoInputs.cache
+D:\GitHub\cs\obj\Debug\net6.0\ENGR115_March_2023_Project4.AssemblyInfo.cs
+D:\GitHub\cs\obj\Debug\net6.0\ENGR115_March_2023_Project4.csproj.CoreCompileInputs.cache
+D:\GitHub\cs\obj\Debug\net6.0\ENGR115_March_2023_Project4.csproj.CopyComplete
+D:\GitHub\cs\obj\Debug\net6.0\ENGR115_March_2023_Project4.dll
+D:\GitHub\cs\obj\Debug\net6.0\refint\ENGR115_March_2023_Project4.dll
+D:\GitHub\cs\obj\Debug\net6.0\ENGR115_March_2023_Project4.pdb
+D:\GitHub\cs\obj\Debug\net6.0\ENGR115_March_2023_Project4.genruntimeconfig.cache
+D:\GitHub\cs\obj\Debug\net6.0\ref\ENGR115_March_2023_Project4.dll

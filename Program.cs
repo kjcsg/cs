@@ -45,12 +45,12 @@ namespace ENGR115_March2023_CourseProject
                 x++; //using x and x++ to increment the aircraft #
             }
 
-            var docPath = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
+            var docPath = Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + "\\output.txt";
             using (var streamwriter = new StreamWriter(docPath))
             {
                 using (var csvwriter = new CsvWriter(streamwriter, CultureInfo.InvariantCulture)) 
                 {
-                    var aircraft = Aircraft.GetConfigurationQty();
+                    //var aircraft = Aircraft.GetConfigurationQty();
                     csvwriter.WriteRecords(outputConfigs);
                 }
             }
